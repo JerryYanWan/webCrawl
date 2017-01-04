@@ -16,26 +16,30 @@ public class Harvester {
 	BufferedReader f = new BufferedReader(new FileReader(args[0]));
 	PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(args[1])));
 	
-	String web = f.readLine();
+        String web = null;
 	StringBuilder sb = new StringBuilder();
-	
-	Document doc;   /*-  Varable defined in Jsoup  -*/
-	int numOfPages = 2;    
-	for (int i = 1; i < numOfPages; i++) {
-	    String website = web;
-	    System.out.println("page : " + i + " -> " + website);
+        while ((web = f.readLine()) != null) {
+            for (int i = 1; i < 26; i++) {
+	    Document doc;
+	    String website = web + Integer.toString(i) + ".html";
 	    int num = 1;
 	    try {
 	        doc = Jsoup.connect(website).get();
-                System.out.println("connect to the website");
-		Elements contents = doc.select("font[data-iceapw]");  
+                System.out.println("connect to the website" + website);
+		// Elements contents = doc.select("span[id]");  
+		Elements contents = doc.select("table[style]");  
 		for (Element content : contents) {
-                    sb.append(content.text());
+                    String text = content.text();
+                    // System.out.println(text);
+                    out.println(text);
+                    // sb.append(text);
+                    // sb.append('\n');
 		}
 	    } catch (IOException e) { e.printStackTrace(); }
+            }
 	}
 
-	out.println(sb.toString());
+	// out.println(sb.toString());
         out.close();
     }
 }
